@@ -1,0 +1,52 @@
+homeassistant:
+  enabled: true
+mqtt:
+  base_topic: zigbee2mqtt
+serial:
+  port: /dev/ttyACM0
+  adapter: zstack
+frontend:
+  enabled: true
+  port: 8080
+devices:
+  '${DEVICE_my_occupancy_sensor}':
+    friendly_name: my_occupancy_sensor
+  '${DEVICE_luz_sala_passagem}':
+    friendly_name: luz_sala_passagem
+  '${DEVICE_luz_sala_passagem_quartos}':
+    friendly_name: luz_sala_passagem_quartos
+  '${DEVICE_botao_sala}':
+    friendly_name: botao_sala
+  '${DEVICE_luz_quarto_trabalho}':
+    friendly_name: luz_quarto_trabalho
+  '${DEVICE_luz_quarto}':
+    friendly_name: luz_quarto
+  '${DEVICE_luz_quarto_paulo}':
+    friendly_name: luz_quarto_paulo
+  '${DEVICE_luz_quarto_thais}':
+    friendly_name: luz_quarto_thais
+  '${DEVICE_porta_esquerda_armario_paulo}':
+    friendly_name: porta_esquerda_armario_paulo
+  '${DEVICE_porta_direita_armario_paulo}':
+    friendly_name: porta_direita_armario_paulo
+  '${DEVICE_porta_esquerda_armario_thais}':
+    friendly_name: porta_esquerda_armario_thais
+  '${DEVICE_porta_direita_armario_thais}':
+    friendly_name: porta_direita_armario_thais
+  '${DEVICE_luz_armario_thais}':
+    friendly_name: luz_armario_thais
+  '${DEVICE_luz_armario_paulo}':
+    friendly_name: luz_armario_paulo
+  '${DEVICE_detector_fumaca_cozinha}':
+    friendly_name: detector_fumaca_cozinha
+  '${DEVICE_botao_sala_trabalho}':
+    friendly_name: botao_sala_trabalho
+  '${DEVICE_sensor_movimento}':
+    friendly_name: sensor_movimento
+  '${DEVICE_luz_cozinha}':
+    friendly_name: luz_cozinha
+  '${DEVICE_fechadura}':
+    friendly_name: fechadura
+  '${DEVICE_sensor_sacada}':
+    friendly_name: sensor_sacada
+version: 4
