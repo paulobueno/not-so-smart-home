@@ -1,0 +1,8 @@
+.env
+*.log
+*.log.*
+*.db
+*.db-*
+
+homeassistant/.*
+homeassistant/secrets.yaml
