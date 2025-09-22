@@ -1,10 +1,15 @@
-homeassistant:
-  enabled: true
+# homeassistant:
+#   enabled: true
 mqtt:
   base_topic: zigbee2mqtt
 serial:
-  port: /dev/ttyACM0
+  #  port: /dev/ttyACM0
+  port: /dev/ttyUSB0
   adapter: zstack
+advanced:
+  channel: ${MQTT_ADVANCED_CHANNEL}
+  network_key: ${MQTT_ADVANCED_NETWORK_KEY}
+  pan_id: ${MQTT_ADVANCED_PAN_ID}
 frontend:
   enabled: true
   port: 8080

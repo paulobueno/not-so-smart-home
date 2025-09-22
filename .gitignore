@@ -4,5 +4,6 @@
 *.db
 *.db-*
 
-homeassistant/.*
-homeassistant/secrets.yaml
+/homeassistant
+/mosquitto
+/zigbee2mqtt

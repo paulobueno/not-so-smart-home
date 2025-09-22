@@ -1,20 +1,57 @@
 services:
-  homeassistant:
-    container_name: hass
-    image: ghcr.io/home-assistant/home-assistant:stable
-    restart: always
-    environment:
-      - TZ=${TZ}
-      - HOST=${HOST}
+  config-init:
+    image: alpine:latest
+    container_name: config-init
+    user: "${UID}:${GID}"
     volumes:
-      - ./homeassistant:/config
-      - /etc/localtime:/etc/localtime:ro
-    privileged: true
-    network_mode: host
-    devices:
-      - /dev/ttyAMA0:/dev/ttyAMA0
+      - ./scripts/config-files/:/input/
+      - ./zigbee2mqtt/data/:/output/zigbee2mqtt/
+      - ./mosquitto/config/:/output/mosquitto/
+      - ./scripts/process-config.sh:/process-config.sh
+    environment:
+      - DEVICE_my_occupancy_sensor=${DEVICE_my_occupancy_sensor}
+      - DEVICE_luz_sala_passagem=${DEVICE_luz_sala_passagem}
+      - DEVICE_luz_sala_passagem_quartos=${DEVICE_luz_sala_passagem_quartos}
+      - DEVICE_botao_sala=${DEVICE_botao_sala}
+      - DEVICE_luz_quarto_trabalho=${DEVICE_luz_quarto_trabalho}
+      - DEVICE_luz_quarto=${DEVICE_luz_quarto}
+      - DEVICE_luz_quarto_paulo=${DEVICE_luz_quarto_paulo}
+      - DEVICE_luz_quarto_thais=${DEVICE_luz_quarto_thais}
+      - DEVICE_porta_esquerda_armario_paulo=${DEVICE_porta_esquerda_armario_paulo}
+      - DEVICE_porta_direita_armario_paulo=${DEVICE_porta_direita_armario_paulo}
+      - DEVICE_porta_esquerda_armario_thais=${DEVICE_porta_esquerda_armario_thais}
+      - DEVICE_porta_direita_armario_thais=${DEVICE_porta_direita_armario_thais}
+      - DEVICE_luz_armario_thais=${DEVICE_luz_armario_thais}
+      - DEVICE_luz_armario_paulo=${DEVICE_luz_armario_paulo}
+      - DEVICE_detector_fumaca_cozinha=${DEVICE_detector_fumaca_cozinha}
+      - DEVICE_botao_sala_trabalho=${DEVICE_botao_sala_trabalho}
+      - DEVICE_sensor_movimento=${DEVICE_sensor_movimento}
+      - DEVICE_luz_cozinha=${DEVICE_luz_cozinha}
+      - DEVICE_fechadura=${DEVICE_fechadura}
+      - DEVICE_sensor_sacada=${DEVICE_sensor_sacada}
+      - MQTT_ADVANCED_NETWORK_KEY=${MQTT_ADVANCED_NETWORK_KEY}
+      - MQTT_ADVANCED_PAN_ID=${MQTT_ADVANCED_PAN_ID}
+      - MQTT_ADVANCED_CHANNEL=${MQTT_ADVANCED_CHANNEL}
+    command: ["/bin/sh", "/process-config.sh"]
+    restart: "no"
+      #  homeassistant:
+      #    container_name: hass
+      #    image: ghcr.io/home-assistant/home-assistant:stable
+      #    user: "${UID}:${GID}"
+      #    restart: always
+      #    environment:
+      #      - TZ=${TZ}
+      #      - HOST=${HOST}
+      #    volumes:
+      #      - ./homeassistant:/config
+      #      - /etc/localtime:/etc/localtime:ro
+      #    privileged: true
+      #    network_mode: host
+      #    devices:
+      #      - /dev/ttyAMA0:/dev/ttyAMA0
   mosquitto:
     image: eclipse-mosquitto:2
+    user: "${UID}:${GID}"
     container_name: mosquitto
     ports:
       - 1883:1883
@@ -26,6 +63,8 @@ services:
     restart: unless-stopped
   zigbee2mqtt:
     container_name: zigbee2mqtt
+    user: "${UID}:${GID}"
+    privileged: true
     restart: always
     image: koenkk/zigbee2mqtt:latest
     network_mode: host
@@ -41,8 +80,9 @@ services:
       - ZIGBEE2MQTT_CONFIG_MQTT_USER=${MQTT_USER}
       - ZIGBEE2MQTT_CONFIG_MQTT_PASSWORD=${MQTT_PASS}
       - ZIGBEE2MQTT_CONFIG_FRONTEND_HOST=${HOST}
-      - ZIGBEE2MQTT_CONFIG_ADVANCED_NETWORK_KEY=${MQTT_ADVANCED_NETWORK_KEY}
-      - ZIGBEE2MQTT_CONFIG_ADVANCED_PAN_ID=${MQTT_ADVANCED_PAN_ID}
-      - ZIGBEE2MQTT_CONFIG_ADVANCED_CHANNEL=${MQTT_ADVANCED_CHANNEL}
     devices:
-      - /dev/ttyUSB0:/dev/ttyACM0
+      - /dev/ttyUSB0:/dev/ttyUSB0
+        #      - /dev/ttyUSB0:/dev/ttyACM0
+    depends_on:
+      config-init:
+        condition: service_completed_successfully
