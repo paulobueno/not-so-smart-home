@@ -1,5 +1,5 @@
-# homeassistant:
-#   enabled: true
+homeassistant:
+  enabled: true
 mqtt:
   base_topic: zigbee2mqtt
 serial:

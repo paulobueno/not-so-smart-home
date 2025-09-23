@@ -2,7 +2,6 @@ services:
   config-init:
     image: alpine:latest
     container_name: config-init
-    user: "${UID}:${GID}"
     volumes:
       - ./scripts/config-files/:/input/
       - ./zigbee2mqtt/data/:/output/zigbee2mqtt/
@@ -34,24 +33,25 @@ services:
       - MQTT_ADVANCED_CHANNEL=${MQTT_ADVANCED_CHANNEL}
     command: ["/bin/sh", "/process-config.sh"]
     restart: "no"
-      #  homeassistant:
-      #    container_name: hass
-      #    image: ghcr.io/home-assistant/home-assistant:stable
-      #    user: "${UID}:${GID}"
-      #    restart: always
-      #    environment:
-      #      - TZ=${TZ}
-      #      - HOST=${HOST}
-      #    volumes:
-      #      - ./homeassistant:/config
-      #      - /etc/localtime:/etc/localtime:ro
-      #    privileged: true
-      #    network_mode: host
-      #    devices:
-      #      - /dev/ttyAMA0:/dev/ttyAMA0
+  homeassistant:
+    container_name: hass
+    image: ghcr.io/home-assistant/home-assistant:stable
+    restart: always
+    environment:
+      - TZ=${TZ}
+      - HOST=${HOST}
+    volumes:
+      - ./homeassistant:/config
+      - /etc/localtime:/etc/localtime:ro
+    privileged: true
+    network_mode: host
+    devices:
+      - /dev/ttyUSB0:/dev/ttyUSB0
+    depends_on:
+      config-init:
+        condition: service_completed_successfully
   mosquitto:
     image: eclipse-mosquitto:2
-    user: "${UID}:${GID}"
     container_name: mosquitto
     ports:
       - 1883:1883
@@ -61,9 +61,11 @@ services:
       - ./mosquitto/data:/mosquitto/data
       - ./mosquitto/log:/mosquitto/log
     restart: unless-stopped
+    depends_on:
+      config-init:
+        condition: service_completed_successfully
   zigbee2mqtt:
     container_name: zigbee2mqtt
-    user: "${UID}:${GID}"
     privileged: true
     restart: always
     image: koenkk/zigbee2mqtt:latest
@@ -82,7 +84,6 @@ services:
       - ZIGBEE2MQTT_CONFIG_FRONTEND_HOST=${HOST}
     devices:
       - /dev/ttyUSB0:/dev/ttyUSB0
-        #      - /dev/ttyUSB0:/dev/ttyACM0
     depends_on:
       config-init:
         condition: service_completed_successfully
