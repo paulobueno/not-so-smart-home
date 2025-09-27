@@ -1,9 +1,6 @@
-homeassistant:
-  enabled: true
 mqtt:
   base_topic: zigbee2mqtt
 serial:
-  #  port: /dev/ttyACM0
   port: /dev/ttyUSB0
   adapter: zstack
 advanced:
